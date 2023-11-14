@@ -1,27 +1,47 @@
-<!DOCTYPE html>
-<html>
+<!DOCTYPE html><html><head>
+        <style>
+            /* Allow canvas to fill entire web page: */
+            html,
+            body {
+                overflow: hidden;
+                margin: 0 !important;
+                padding: 0 !important;
+                height: 100%;
+                width: 100%;
+            }
+        </style>
+    
+<link rel="preload" href="/portfolio-75ac823549398e7b_bg.wasm" as="fetch" type="application/wasm" crossorigin="">
+<link rel="modulepreload" href="/portfolio-75ac823549398e7b.js"></head>
+    <body>
+        <canvas id="canvas">
+    
 
-<head>
-    <style>
-        /* Allow canvas to fill entire web page: */
-        html,
-        body {
-            overflow: hidden;
-            margin: 0 !important;
-            padding: 0 !important;
-            height: 100%;
-            width: 100%;
+</canvas><script type="module">import init from '/portfolio-75ac823549398e7b.js';init('/portfolio-75ac823549398e7b_bg.wasm');</script><script>(function () {
+    var protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    var url = protocol + '//' + window.location.host + '/_trunk/ws';
+    var poll_interval = 5000;
+    var reload_upon_connect = () => {
+        window.setTimeout(
+            () => {
+                // when we successfully reconnect, we'll force a
+                // reload (since we presumably lost connection to
+                // trunk due to it being killed, so it will have
+                // rebuilt on restart)
+                var ws = new WebSocket(url);
+                ws.onopen = () => window.location.reload();
+                ws.onclose = reload_upon_connect;
+            },
+            poll_interval);
+    };
+
+    var ws = new WebSocket(url);
+    ws.onmessage = (ev) => {
+        const msg = JSON.parse(ev.data);
+        if (msg.reload) {
+            window.location.reload();
         }
-    </style>
-
-</head>
-
-<body>
-    <canvas id="canvas"></canvas>
-    <script type="module">
-        import init from "./portfolio-75ac823549398e7b.js";
-        init();
-    </script>
-</body>
-
-</html>
+    };
+    ws.onclose = reload_upon_connect;
+})()
+</script></body></html>
